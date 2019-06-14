@@ -1,5 +1,5 @@
 ## Introduction
-Are you faster than Ai or... what's her son's name again? That's pretty impressive, but I'm not convinced by the "cognitive tradeoff hypothesis."
+Are you faster than Ai? (Or do you have as much free choice? :-p) That's pretty impressive, but I'm not convinced by the "cognitive tradeoff hypothesis."
 
 [Try it here](http://mindfield.surge.sh/) or run it on your own PC:
 
