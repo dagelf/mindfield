@@ -1,7 +1,22 @@
 ## Introduction
 Are you faster than a Chimp? Eg. Ai or... what's her son's name again? That's pretty impressive, but I don't buy this "cognitive tradeoff hypothesis."
 
-Git clone it to your own PC and run it locally or [Try it here](http://mindfield.surge.sh/)
+[Try it here](http://mindfield.surge.sh/) or run it on your own PC:
+
+    git clone https://github.com/dagelf/mindfield.git 
+
+Or take the opportunity to set up better permissions on your filesystem - give yourself permissions in your /usr/src directory:
+    
+    sudo chgrp `whoami` /usr/src; sudo chmod g+s /usr/src 
+    
+Or even better, create an src group, give it permissions, and add yourself. *While this is better, it requires logging out and in again otherwise the files won't be writable by you yet*
+    
+    sudo adduser src; sudo chgrp src /usr/src; sudo chmod g+s /usr/src; sudo usermod -a -G src `whoami`
+
+And then get it:
+
+    mkdir -p /usr/src/github/dagelf; cd /usr/src/github/dagelf    
+    git clone https://github.com/dagelf/mindfield.git 
 
 This is a quick javascript implementation of a game similar to the chimp game featured on Vsauce [Mindfield EP1](https://www.youtube.com/watch?v=iqKdEhx-dD4)
 
