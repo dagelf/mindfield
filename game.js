@@ -9,7 +9,7 @@ output=''; for (var i = 0; i < 16; i++) {
 
 NodeList.prototype.forEach = HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
-next=1,tlast=0,start=0,mistakes=0,best=10000;
+next=1,tlast=0,tstart=0,mistakes=0,best=10000;
 tgame=[],tmove=[];
 
 /*
@@ -20,6 +20,7 @@ stats to gather:
  accuracy
  accuracy vs number of numbers
  accuracy vs number of squares
+ most common first mistake
 
 */
 score=document.getElementById('score');
@@ -38,21 +39,26 @@ boxes.forEach(function (tag,n) {
       tag.style.background='red';
       boxes.forEach(function (tag,n) { tag.innerHTML=box[n] });
     } else {
-      if (next==1) { start=tnow; };
+      if (next==1) { tstart=tnow; };
         tag.style.background='lime';
         boxes.forEach(function (tag,n) { tag.innerHTML='' });
         next++;
         if (x==9) {
-//          Plotly.extendTraces('graph', {y: [[(tnow-start)]]}, [0]);
-          score.innerHTML="Done in "+(tnow-start)+"ms with "+mistakes+" mistakes!<br>"+score.innerHTML;
+  
+  tgame.push(tnow-tstart);        
+  tgame.sort(function(a,b){return a-b;});
+  Plotly.newPlot('games', [{type: 'bar', y: tgame}], {}, {showSendToCloud: true});
+
+          score.innerHTML="Done in "+(tnow-tstart)+"ms with "+mistakes+" mistakes!<br>"+score.innerHTML;
           shuffle(box); mistakes=0;
           boxes.forEach(function (tag,n) { tag.style.background=''; tag.innerHTML=box[n] });
           next=1;
         } else {
+
  if (tlast>0) {         
   tmove.push(tnow-tlast);
   tmove.sort(function(a,b){return a-b;});
- Plotly.newPlot('graph', [{type: 'bar', y: tmove}], {}, {showSendToCloud: true});
+  Plotly.newPlot('moves', [{type: 'bar', y: tmove}], {}, {showSendToCloud: true});
  };
           console.log(tnow-tlast,"ms")
           tlast=tnow;
