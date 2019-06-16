@@ -2,14 +2,15 @@ body,html {
   display: flex;
 }
 #game {
+ padding: 10px;
  width:  800;
 }
 li {
   float: left;
   list-style: none;
-  outline: solid;
-  outline-width: 1px;
-  margin: 1px;
+  border: solid;
+  border-width: 1px;
+  margin: -1px;
   width: 99px;
   height: 99px;
   font-size: 90px;

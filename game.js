@@ -1,11 +1,24 @@
 // Board sizing and setup
-rows=10 // boxes per row/col
-nums=4  // number of digits
+rows=5 // boxes per row/col
+cols=rows  
+nums=5  // number of digits
+size=300 
+
+// 
+
+// rows 1 nums 1 is a reaction test game
+// rows 2 nums 1 can be made into a sameness reaction time game
+// interesting, my left and right hand reaction time is imilar
+// but if I dont mind errors my right hand is 100ms faster
+// nums 2 rows 2 cols 1 increases my initial reponse time by 200ms
+// cols 2 I can't get 2nd click under 100ms with one finger
+// numbs 5 cols/rows 5 I take 100ms longer to look when using 2 hands
+
 
 ww = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 wh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-w=Math.min(ww,rows*150) // todo compute size from cm instead of 150px
-btot=rows*rows-1; bx=w/rows-2; by=bx // -margin; todo compute aspect ratio
+w=Math.min(ww,rows*size) // todo compute size from cm instead of 150px
+btot=rows*cols-1; bx=w/rows-2; by=bx // -margin; todo compute aspect ratio
 
 // easier to set global css than to update each li individually
 css="#game { width: "+w+"px; } li { width: "+bx+"px; height: "+by+"px; font-size: "+(bx-9)+"px; text-align: center; }";
@@ -28,11 +41,11 @@ output=''; for (i=0; i<=btot; i++) {
 NodeList.prototype.forEach = HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
 // Initialize Plotly graphs
-Plotly.newPlot('viewtime', [{type: 'bar',y:[1,2,3]}])
-Plotly.newPlot('moves', [{type: 'bar',y:[1,2,3]}])
-Plotly.newPlot('games', [{type: 'bar',y:[1,2,3]}]); // with option placeholders 
+//Plotly.newPlot('viewtime', [{type: 'bar',x:[1,2,3]}])
+//Plotly.newPlot('moves', [{type: 'bar',x:[1,2,3]}])
+//Plotly.newPlot('games', [{type: 'bar',x:[1,2,3]}]); // with option placeholders 
 
-
+Did you do the speed test because you were having problems?
 /*
 fixme
  add persistent storiage
@@ -81,39 +94,44 @@ boxes.forEach(function (tag,n) {
 // #fixme onclick if no touchscreen, but need to find workaround for firefox click delay 
   tag.addEventListener('touchstart', function (m) {
     tnow=Date.now(); 
-    // m.preventDefault(); supposedly improves browser response time
+    console.log(tnow-tlast,"ms") 
+    m.preventDefault(); // disable scroll - and supposedly improves browser response time
     tag=m.currentTarget;
     x=box[n]; // x=box clickec on
-    if (x==1) {
+    if (x==1) { // fixme or next==1 to count start from first error, or should you count from first display? 
+      tstart=tnow;
       tview.push(tnow-tlast);        
-      Plotly.newPlot('viewtime',[{type: 'bar', y: tview}])
+//      Plotly.newPlot('viewtime',[{type: 'bar', y: tview}])
     } else {
       tmove.push(tnow-tlast); 
-      Plotly.newPlot('moves',[{type: 'bar', y: tmove}])
+//      Plotly.newPlot('moves',[{type: 'bar', y: tmove}])
     }; tlast=tnow;
+
     if (x!=next) {
       console.log("Wrong! You clicked ",x," instead of ",next);
       mistakes++;
       tag.style.background='red';
       boxes.forEach(function (tag,n) { tag.innerHTML=box[n] });
     } else {
-      if (next==1) { tstart=tnow; };
+        //  tmove.sort(function(a,b){return a-b;});
+ //       Plotly.newPlot('moves', [{type: 'bar', y: tmove}]); // {}, {showSendToCloud: true}]);
+
         tag.style.background='lime';
         boxes.forEach(function (tag,n) { tag.innerHTML='' });
         next++;
         if (x==nums) {  // game done
           tgame.push(tnow-tstart);        
-          Plotly.newPlot('games',[{type: 'bar', y: tgame}])
+//          Plotly.newPlot('games',[{type: 'bar', y: tgame}])
 //          Plotly.react('games',[{type: 'histogram', x:tgame, xbins: {size:50,end:4000}}])
+//Plotly.react('viewtime',[{type: 'histogram', x: tview, xbins: { size:50,end:2000 }}])
+//Plotly.react('moves',[{type: 'histogram', x: tmove, xbins: { size:50,end:2000 }}])
+//Plotly.react('games',[{type: 'histogram', x: tgame, xbins: {size:50,end:4000}}])
+
           score.innerHTML="Done in "+(tnow-tstart)+"ms with "+mistakes+" mistakes!<br>"+score.innerHTML;
           shuffle(box); mistakes=0;
           boxes.forEach(function (tag,n) { tag.style.background=''; tag.innerHTML=box[n] });
           next=1;
         };
-        //  tmove.sort(function(a,b){return a-b;});
-        Plotly.newPlot('moves', [{type: 'bar', y: tmove}]); // {}, {showSendToCloud: true}]);
-        // Plotly.react('moves',[{type: 'histogram',x:tmove,xbins: { size:30,end:2000 }}])
-        console.log(tnow-tlast,"ms") 
     }
   })
 });
