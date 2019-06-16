@@ -1,5 +1,6 @@
 body,html {
   display: flex;
+  flex-wrap: wrap;  
 }
 #game {
  padding: 10px;
@@ -31,4 +32,5 @@ li {
   background: cyan;
 }
 #score {
+   min-width: 400px;
 }
