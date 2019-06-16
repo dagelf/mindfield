@@ -28,6 +28,7 @@ output=''; for (i=0; i<=btot; i++) {
 NodeList.prototype.forEach = HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
 // Initialize Plotly graphs
+Plotly.newPlot('viewtime', [{type: 'bar',y:[1,2,3]}])
 Plotly.newPlot('moves', [{type: 'bar',y:[1,2,3]}])
 Plotly.newPlot('games', [{type: 'bar',y:[1,2,3]}]); // with option placeholders 
 
@@ -72,17 +73,24 @@ stats to gather:
 
 score=document.getElementById('score');
 next=1,tstart=0,mistakes=0,best=10000,tlast=Date.now();
-tgame=[],tmove=[];
+tgame=[],tmove=[],tview=[];
 
 
 var boxes = document.querySelectorAll('li');
 boxes.forEach(function (tag,n) {
 // #fixme onclick if no touchscreen, but need to find workaround for firefox click delay 
   tag.addEventListener('touchstart', function (m) {
-    tnow=Date.now(); // m.preventDefault(); supposedly improves browser response time
-    tmove.push(tnow-tlast); tlast=tnow;
+    tnow=Date.now(); 
+    // m.preventDefault(); supposedly improves browser response time
     tag=m.currentTarget;
     x=box[n]; // x=box clickec on
+    if (x==1) {
+      tview.push(tnow-tlast);        
+      Plotly.newPlot('viewtime',[{type: 'bar', y: tview}])
+    } else {
+      tmove.push(tnow-tlast); 
+      Plotly.newPlot('moves',[{type: 'bar', y: tmove}])
+    }; tlast=tnow;
     if (x!=next) {
       console.log("Wrong! You clicked ",x," instead of ",next);
       mistakes++;
