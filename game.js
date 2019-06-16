@@ -71,15 +71,16 @@ stats to gather:
 */
 
 score=document.getElementById('score');
-next=1,tlast=0,tstart=0,mistakes=0,best=10000;
+next=1,tstart=0,mistakes=0,best=10000,tlast=Date.now();
 tgame=[],tmove=[];
+
 
 var boxes = document.querySelectorAll('li');
 boxes.forEach(function (tag,n) {
 // #fixme onclick if no touchscreen, but need to find workaround for firefox click delay 
   tag.addEventListener('touchstart', function (m) {
-    tnow=Date.now();
-	m.preventDefault();
+    tnow=Date.now(); // m.preventDefault(); supposedly improves browser response time
+    tmove.push(tnow-tlast); tlast=tnow;
     tag=m.currentTarget;
     x=box[n]; // x=box clickec on
     if (x!=next) {
@@ -92,24 +93,19 @@ boxes.forEach(function (tag,n) {
         tag.style.background='lime';
         boxes.forEach(function (tag,n) { tag.innerHTML='' });
         next++;
-        if (x==nums) {  
+        if (x==nums) {  // game done
           tgame.push(tnow-tstart);        
-//          Plotly.newPlot('games',[{type: 'bar', y: tgame}])
+          Plotly.newPlot('games',[{type: 'bar', y: tgame}])
 //          Plotly.react('games',[{type: 'histogram', x:tgame, xbins: {size:50,end:4000}}])
           score.innerHTML="Done in "+(tnow-tstart)+"ms with "+mistakes+" mistakes!<br>"+score.innerHTML;
           shuffle(box); mistakes=0;
           boxes.forEach(function (tag,n) { tag.style.background=''; tag.innerHTML=box[n] });
           next=1;
-        } else {
-            if (tlast>0) {         
-              tmove.push(tnow-tlast);
-              //  tmove.sort(function(a,b){return a-b;});
-//              Plotly.newPlot('moves', [{type: 'bar', y: tmove}]); // {}, {showSendToCloud: true}]);
-//              Plotly.react('moves',[{type: 'histogram',x:tmove,xbins: { size:30,end:2000 }}])
-              console.log(tnow-tlast,"ms")
-            };
-          tlast=tnow;
-        } 
+        };
+        //  tmove.sort(function(a,b){return a-b;});
+        Plotly.newPlot('moves', [{type: 'bar', y: tmove}]); // {}, {showSendToCloud: true}]);
+        // Plotly.react('moves',[{type: 'histogram',x:tmove,xbins: { size:30,end:2000 }}])
+        console.log(tnow-tlast,"ms") 
     }
   })
 });
