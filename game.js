@@ -5,7 +5,7 @@ nums=4  // number of digits
 ww = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 wh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 w=Math.min(ww,rows*150) // todo compute size from cm instead of 150px
-btot=rows*rows; bx=w/(rows+1); by=bx // todo compute aspect ratio
+btot=rows*rows; bx=w/rows-0; by=bx // -margin; todo compute aspect ratio
 
 // easier to set global css than to update each li individually
 css="#game { width: "+w+"px; } li { width: "+bx+"px; height: "+by+"px; font-size: "+(bx-9)+"px; text-align: center; }";
@@ -28,8 +28,8 @@ output=''; for (var i = 0; i < btot; i++) {
 NodeList.prototype.forEach = HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
 // Initialize Plotly graphs
-Plotly.newPlot('games', [{type: 'bar'}], {}, {}); 
-Plotly.newPlot('moves', [{type: 'histogram'}])
+Plotly.newPlot('moves', [{type: 'bar',y:[1,2,3]}])
+Plotly.newPlot('games', [{type: 'bar',y:[1,2,3]}]); // with option placeholders 
 
 
 /*
@@ -93,23 +93,21 @@ boxes.forEach(function (tag,n) {
         tag.style.background='lime';
         boxes.forEach(function (tag,n) { tag.innerHTML='' });
         next++;
-        if (x==nums) {
-  
-  tgame.push(tnow-tstart);        
-  Plotly.react('games',[{type: 'histogram', x:tgame, xbins: {size:50,end:4000}}])
-
+        if (x==nums) {  
+          tgame.push(tnow-tstart);        
+          Plotly.newPlot('games',[{type: 'bar', y: tgame}])
+//          Plotly.react('games',[{type: 'histogram', x:tgame, xbins: {size:50,end:4000}}])
           score.innerHTML="Done in "+(tnow-tstart)+"ms with "+mistakes+" mistakes!<br>"+score.innerHTML;
           shuffle(box); mistakes=0;
           boxes.forEach(function (tag,n) { tag.style.background=''; tag.innerHTML=box[n] });
           next=1;
         } else {
-
- if (tlast>0) {         
-  tmove.push(tnow-tlast);
-//  tmove.sort(function(a,b){return a-b;});
-//  Plotly.newPlot('moves', [{type: 'bar', y: tmove}], {}, {showSendToCloud: true});
-  Plotly.newPlot('moves',[{type: 'histogram',x: tmove,xbins: { size:30,end:2000 }}])
- };
+            if (tlast>0) {         
+              tmove.push(tnow-tlast);
+              //  tmove.sort(function(a,b){return a-b;});
+              Plotly.newPlot('moves', [{type: 'bar', y: tmove}]); // {}, {showSendToCloud: true}]);
+//              Plotly.react('moves',[{type: 'histogram',x:tmove,xbins: { size:30,end:2000 }}])
+            };
           console.log(tnow-tlast,"ms")
           tlast=tnow;
         } 

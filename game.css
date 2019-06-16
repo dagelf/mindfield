@@ -1,25 +1,27 @@
+body,html {
+  display: flex;
+}
 #game {
  width:  800;
 }
 li {
-  list-style: none;
   float: left;
+  list-style: none;
   outline: solid;
-  margin: 1px;
+  margin: 0px;
   width: 99px;
   height: 99px;
   font-size: 90px;
   text-align: center;
 } 
-#score {
-  float: left;
-}
 #moves {
-  float: left;
+  left:100px;
   height: 350px;
   background: cyan;
-}#games {
-  float: left;
+}
+#games {
   height: 350px;
   background: cyan;
+}
+#score {
 }
