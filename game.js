@@ -1,10 +1,7 @@
 // Board sizing and setup
-rows=5 // boxes per row/col
-cols=rows  
+rows=5; cols=rows; // boxes per row/col
 nums=5  // number of digits
-size=300 
-
-// 
+size=300 // todo compute size from cm instead of px
 
 // rows 1 nums 1 is a reaction test game
 // rows 2 nums 1 can be made into a sameness reaction time game
@@ -14,10 +11,9 @@ size=300
 // cols 2 I can't get 2nd click under 100ms with one finger
 // numbs 5 cols/rows 5 I take 100ms longer to look when using 2 hands
 
-
 ww = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 wh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-w=Math.min(ww,rows*size) // todo compute size from cm instead of 150px
+w=Math.min(Math.min(wh,ww)-40,rows*size) 
 btot=rows*cols-1; bx=w/rows-2; by=bx // -margin; todo compute aspect ratio
 
 // easier to set global css than to update each li individually
