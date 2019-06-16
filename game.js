@@ -45,7 +45,6 @@ NodeList.prototype.forEach = HTMLCollection.prototype.forEach = Array.prototype.
 //Plotly.newPlot('moves', [{type: 'bar',x:[1,2,3]}])
 //Plotly.newPlot('games', [{type: 'bar',x:[1,2,3]}]); // with option placeholders 
 
-Did you do the speed test because you were having problems?
 /*
 fixme
  add persistent storiage
