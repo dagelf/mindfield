@@ -1,14 +1,14 @@
-#game { 
- width: 800px; 
+#game {
+ width:  800;
 }
 li {
   list-style: none;
   float: left;
   outline: solid;
-  margin: 10px;
-  width: 170px;
-  height: 150px;
-  font-size: 8em;
+  margin: 1px;
+  width: 99px;
+  height: 99px;
+  font-size: 90px;
   text-align: center;
 } 
 #score {

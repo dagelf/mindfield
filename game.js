@@ -1,29 +1,79 @@
+// Board sizing and setup
+rows=10 // boxes per row/col
+nums=4  // number of digits
+
+ww = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+wh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+w=Math.min(ww,rows*150) // todo compute size from cm instead of 150px
+btot=rows*rows; bx=w/(rows+1); by=bx // todo compute aspect ratio
+
+// easier to set global css than to update each li individually
+css="#game { width: "+w+"px; } li { width: "+bx+"px; height: "+by+"px; font-size: "+(bx-9)+"px; text-align: center; }";
+var style=document.createElement('style'); style.type='text/css';
+if(style.styleSheet){ style.styleSheet.cssText=css;}else{ style.appendChild(document.createTextNode(css)); }
+document.getElementsByTagName('head')[0].appendChild(style);
+
+// fill box array blanks and nums numbers, and then shuffle
 function shuffle(a) { var j, x, i; for (i = a.length - 1; i > 0; i--) { j = Math.floor(Math.random() * (i + 1)); x = a[i]; a[i] = a[j]; a[j] = x }}
-var box = []; for (var i = 1; i <= 16; i++) { 
-  if (i<=9) { box.push(i); } else { box.push('')};
+var box = []; for (var i = 1; i <= btot; i++) { 
+  if (i<=nums) { box.push(i); } else { box.push('')};
 }; shuffle(box);
 
-output=''; for (var i = 0; i < 16; i++) { 
+// add li for each box element
+output=''; for (var i = 0; i < btot; i++) { 
   output += '<li>'; output += box[i]; output += '</li>';
 }; document.getElementById('game').innerHTML = output;
 
+// vanillaJS foreach
 NodeList.prototype.forEach = HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
-next=1,tlast=0,tstart=0,mistakes=0,best=10000;
-tgame=[],tmove=[];
+// Initialize Plotly graphs
+Plotly.newPlot('games', [{type: 'bar'}], {}, {}); 
+Plotly.newPlot('moves', [{type: 'histogram'}])
+
 
 /*
+fixme
+ add persistent storiage
+ add configuration interfae
+ add way to skip errors and continue if possible
+
+
 stats to gather:
  most commonly mistaked numbers
  correlation between time viewed and completed
  best time by mistakes
+  types of mistakes
+    most common numbers mistaken
+    proximity
+ time to recover from mistake
  accuracy
- accuracy vs number of numbers
- accuracy vs number of squares
+  vs number of digits
+  vs number of squares
+  by size of squares
+  by browser
+  by device 
+  by type of digits
+  one handed vs two handed
+   number of fingers used
+  by order of digits (eg for one hand or two hands, having to move your hand)
+  team play
  most common first mistake
+ mistakes by click speed 
+ when playing same board multiple times - best score, time to get there
+  
+ store random seed for each game for further analysis
+ causes of delays
 
+ notes
+   programming gripes to remove:
+    syntax errors - good ide and runtime command line can help a lot
+    keeping track of brackets - coffeescript?
 */
+
 score=document.getElementById('score');
+next=1,tlast=0,tstart=0,mistakes=0,best=10000;
+tgame=[],tmove=[];
 
 var boxes = document.querySelectorAll('li');
 boxes.forEach(function (tag,n) {
@@ -43,11 +93,10 @@ boxes.forEach(function (tag,n) {
         tag.style.background='lime';
         boxes.forEach(function (tag,n) { tag.innerHTML='' });
         next++;
-        if (x==9) {
+        if (x==nums) {
   
   tgame.push(tnow-tstart);        
-  tgame.sort(function(a,b){return a-b;});
-  Plotly.newPlot('games', [{type: 'bar', y: tgame}], {}, {showSendToCloud: true});
+  Plotly.react('games',[{type: 'histogram', x:tgame, xbins: {size:50,end:4000}}])
 
           score.innerHTML="Done in "+(tnow-tstart)+"ms with "+mistakes+" mistakes!<br>"+score.innerHTML;
           shuffle(box); mistakes=0;
@@ -57,8 +106,9 @@ boxes.forEach(function (tag,n) {
 
  if (tlast>0) {         
   tmove.push(tnow-tlast);
-  tmove.sort(function(a,b){return a-b;});
-  Plotly.newPlot('moves', [{type: 'bar', y: tmove}], {}, {showSendToCloud: true});
+//  tmove.sort(function(a,b){return a-b;});
+//  Plotly.newPlot('moves', [{type: 'bar', y: tmove}], {}, {showSendToCloud: true});
+  Plotly.newPlot('moves',[{type: 'histogram',x: tmove,xbins: { size:30,end:2000 }}])
  };
           console.log(tnow-tlast,"ms")
           tlast=tnow;
