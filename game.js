@@ -1,6 +1,6 @@
 // Board sizing and setup
-rows=5; cols=rows; // boxes per row/col
-nums=5  // number of digits
+rows=10; cols=rows; // boxes per row/col
+nums=7  // number of digits
 size=300 // todo compute size from cm instead of px
 
 // rows 1 nums 1 is a reaction test game
