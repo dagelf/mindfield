@@ -5,7 +5,7 @@ nums=4  // number of digits
 ww = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 wh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 w=Math.min(ww,rows*150) // todo compute size from cm instead of 150px
-btot=rows*rows; bx=w/rows-0; by=bx // -margin; todo compute aspect ratio
+btot=rows*rows-1; bx=w/rows-2; by=bx // -margin; todo compute aspect ratio
 
 // easier to set global css than to update each li individually
 css="#game { width: "+w+"px; } li { width: "+bx+"px; height: "+by+"px; font-size: "+(bx-9)+"px; text-align: center; }";
@@ -15,12 +15,12 @@ document.getElementsByTagName('head')[0].appendChild(style);
 
 // fill box array blanks and nums numbers, and then shuffle
 function shuffle(a) { var j, x, i; for (i = a.length - 1; i > 0; i--) { j = Math.floor(Math.random() * (i + 1)); x = a[i]; a[i] = a[j]; a[j] = x }}
-var box = []; for (var i = 1; i <= btot; i++) { 
+var box = []; for (i=1; i<=btot+1; i++) { 
   if (i<=nums) { box.push(i); } else { box.push('')};
 }; shuffle(box);
 
 // add li for each box element
-output=''; for (var i = 0; i < btot; i++) { 
+output=''; for (i=0; i<=btot; i++) { 
   output += '<li>'; output += box[i]; output += '</li>';
 }; document.getElementById('game').innerHTML = output;
 
@@ -37,7 +37,6 @@ fixme
  add persistent storiage
  add configuration interfae
  add way to skip errors and continue if possible
-
 
 stats to gather:
  most commonly mistaked numbers
@@ -82,7 +81,7 @@ boxes.forEach(function (tag,n) {
     tnow=Date.now();
 	m.preventDefault();
     tag=m.currentTarget;
-    x=box[n];
+    x=box[n]; // x=box clickec on
     if (x!=next) {
       console.log("Wrong! You clicked ",x," instead of ",next);
       mistakes++;
@@ -95,7 +94,7 @@ boxes.forEach(function (tag,n) {
         next++;
         if (x==nums) {  
           tgame.push(tnow-tstart);        
-          Plotly.newPlot('games',[{type: 'bar', y: tgame}])
+//          Plotly.newPlot('games',[{type: 'bar', y: tgame}])
 //          Plotly.react('games',[{type: 'histogram', x:tgame, xbins: {size:50,end:4000}}])
           score.innerHTML="Done in "+(tnow-tstart)+"ms with "+mistakes+" mistakes!<br>"+score.innerHTML;
           shuffle(box); mistakes=0;
@@ -105,10 +104,10 @@ boxes.forEach(function (tag,n) {
             if (tlast>0) {         
               tmove.push(tnow-tlast);
               //  tmove.sort(function(a,b){return a-b;});
-              Plotly.newPlot('moves', [{type: 'bar', y: tmove}]); // {}, {showSendToCloud: true}]);
+//              Plotly.newPlot('moves', [{type: 'bar', y: tmove}]); // {}, {showSendToCloud: true}]);
 //              Plotly.react('moves',[{type: 'histogram',x:tmove,xbins: { size:30,end:2000 }}])
+              console.log(tnow-tlast,"ms")
             };
-          console.log(tnow-tlast,"ms")
           tlast=tnow;
         } 
     }
