@@ -133,10 +133,9 @@ boxes.forEach(function (tag,n) {
           //Plotly.react('viewtime',[{type: 'histogram', x: tview, xbins: { size:50,end:2000 }}])
           //Plotly.react('moves',[{type: 'histogram', x: tmove, xbins: { size:50,end:2000 }}])
           //Plotly.react('games',[{type: 'histogram', x: tgame, xbins: {size:50,end:4000}}])
-          streak+=flawless; if (streak>topstreak) {
-            topstreak=streak;
-            streaktime+=(tnow-tstart); if (streaktime<topstreaktime) topstreaktime=streaktime;
-          }
+          if (flawless) { streak+=1; streaktime+=(tnow-tstart); if (streak>topstreak) {
+            topstreak=streak; topstreaktime=streaktime;
+          }};
           score.innerHTML="Done in "+(tnow-tstart)+"ms with "+mistakes+" mistakes!<br>"+score.innerHTML;
           score.innerHTML="Current winning streak is "+streak+" in "+streaktime+"ms. Longest is "+topstreak+" games in "+topstreaktime+"ms !<br>"+score.innerHTML;
           shuffle(box); mistakes=0;
