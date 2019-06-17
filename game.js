@@ -110,7 +110,7 @@ boxes.forEach(function (tag,n) {
                 // todo hide numbers at start and show start button
       tstart=tnow;
       tview.push(tnow-tlast);  //  Plotly.newPlot('viewtime',[{type: 'bar', y: tview}])
-      flawless=1;
+      flawless=1; streaktime=0;
     } else {
       tmove.push(tnow-tlast);  //  Plotly.newPlot('moves',[{type: 'bar', y: tmove}])
     }; tlast=tnow;
@@ -133,8 +133,10 @@ boxes.forEach(function (tag,n) {
           //Plotly.react('viewtime',[{type: 'histogram', x: tview, xbins: { size:50,end:2000 }}])
           //Plotly.react('moves',[{type: 'histogram', x: tmove, xbins: { size:50,end:2000 }}])
           //Plotly.react('games',[{type: 'histogram', x: tgame, xbins: {size:50,end:4000}}])
-          streak+=flawless; if (streak>topstreak) topstreak=streak;
-          streaktime+=(tnow-tstart); if (streaktime>topstreaktime) topstreaktime=streaktime;
+          streak+=flawless; if (streak>topstreak) {
+            topstreak=streak;
+            streaktime+=(tnow-tstart); if (streaktime<topstreaktime) topstreaktime=streaktime;
+          }
           score.innerHTML="Done in "+(tnow-tstart)+"ms with "+mistakes+" mistakes!<br>"+score.innerHTML;
           score.innerHTML="Current winning streak is "+streak+" in "+streaktime+"ms. Longest is "+topstreak+" games in "+topstreaktime+"ms !<br>"+score.innerHTML;
           shuffle(box); mistakes=0;
