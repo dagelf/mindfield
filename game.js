@@ -110,14 +110,14 @@ boxes.forEach(function (tag,n) {
                 // todo hide numbers at start and show start button
       tstart=tnow;
       tview.push(tnow-tlast);  //  Plotly.newPlot('viewtime',[{type: 'bar', y: tview}])
-      flawless=1; streaktime=0;
+      flawless=1; 
     } else {
       tmove.push(tnow-tlast);  //  Plotly.newPlot('moves',[{type: 'bar', y: tmove}])
     }; tlast=tnow;
 
     if (x!=next) {
       console.log("Wrong! You clicked ",x," instead of ",next);
-      mistakes++; flawless=0; topstreak=streak; streak=0; 
+      mistakes++; flawless=0; topstreak=streak; streak=0; streaktime=(tstart-tnow);
       tag.style.background='red';
       boxes.forEach(function (tag,n) { tag.innerHTML=box[n] });
     } else {
@@ -133,11 +133,11 @@ boxes.forEach(function (tag,n) {
           //Plotly.react('viewtime',[{type: 'histogram', x: tview, xbins: { size:50,end:2000 }}])
           //Plotly.react('moves',[{type: 'histogram', x: tmove, xbins: { size:50,end:2000 }}])
           //Plotly.react('games',[{type: 'histogram', x: tgame, xbins: {size:50,end:4000}}])
-          if (flawless) { streak+=1; streaktime+=(tnow-tstart); if (streak>topstreak) {
+          if (flawless==1) { streak+=1; streaktime+=(tnow-tstart); if (streak>topstreak) {
             topstreak=streak; topstreaktime=streaktime;
           }};
           score.innerHTML="Done in "+(tnow-tstart)+"ms with "+mistakes+" mistakes!<br>"+score.innerHTML;
-          score.innerHTML="Current winning streak is "+streak+" in "+streaktime+"ms. Longest is "+topstreak+" games in "+topstreaktime+"ms !<br>"+score.innerHTML;
+          score.innerHTML="Current winning streak is "+streak+" in "+streaktime+"ms. Longest is "+topstreak+" games in "+topstreaktime+"ms!<br>"+score.innerHTML;
           shuffle(box); mistakes=0;
           boxes.forEach(function (tag,n) { tag.style.background=''; tag.innerHTML=box[n] });
           next=1;
