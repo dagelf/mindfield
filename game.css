@@ -1,6 +1,7 @@
 body,html {
   display: flex;
   flex-wrap: wrap;  
+  font-family: mono;
 }
 #game {
  padding: 10px;
@@ -10,7 +11,7 @@ li {
   float: left;
   list-style: none;
   border: solid;
-  border-width: 1px;
+  border-width: 2px;
   margin: -1px;
   width: 99px;
   height: 99px;

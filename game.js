@@ -1,7 +1,18 @@
 // Board sizing and setup
-rows=10; cols=rows; // boxes per row/col
-nums=7  // number of digits
+//game=[1,1,1]
+//game=[2,1,1]
+//game=[2,1,2]
+//game=[2,2,2]
+//game=[3,3,2]
+//game=[10,10,9]
+
+game=[4,4,7] // rows, cols, numbers
+
 size=300 // todo compute size from cm instead of px
+
+// todo react to window size/orientation changes
+// todo add tuchend handler that detects swipe left and shows options panel
+// todo hide numbers at start and show start button
 
 // rows 1 nums 1 is a reaction test game
 // rows 2 nums 1 can be made into a sameness reaction time game
@@ -10,6 +21,8 @@ size=300 // todo compute size from cm instead of px
 // nums 2 rows 2 cols 1 increases my initial reponse time by 200ms
 // cols 2 I can't get 2nd click under 100ms with one finger
 // numbs 5 cols/rows 5 I take 100ms longer to look when using 2 hands
+
+rows=game[0]; cols=game[1]; nums=game[2] // readability
 
 ww = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 wh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
@@ -61,7 +74,7 @@ stats to gather:
   by size of squares
   by browser
   by device 
-  by type of digits
+  by type of digits / font type
   one handed vs two handed
    number of fingers used
   by order of digits (eg for one hand or two hands, having to move your hand)
@@ -81,7 +94,7 @@ stats to gather:
 
 score=document.getElementById('score');
 next=1,tstart=0,mistakes=0,best=10000,tlast=Date.now();
-tgame=[],tmove=[],tview=[];
+tgame=[],tmove=[],tview=[],flawless=0,topstreak=0,streak=0,streaktime=0,topstreaktime=0;
 
 
 var boxes = document.querySelectorAll('li');
@@ -94,35 +107,36 @@ boxes.forEach(function (tag,n) {
     tag=m.currentTarget;
     x=box[n]; // x=box clickec on
     if (x==1) { // fixme or next==1 to count start from first error, or should you count from first display? 
+                // todo hide numbers at start and show start button
       tstart=tnow;
-      tview.push(tnow-tlast);        
-//      Plotly.newPlot('viewtime',[{type: 'bar', y: tview}])
+      tview.push(tnow-tlast);  //  Plotly.newPlot('viewtime',[{type: 'bar', y: tview}])
+      flawless=1;
     } else {
-      tmove.push(tnow-tlast); 
-//      Plotly.newPlot('moves',[{type: 'bar', y: tmove}])
+      tmove.push(tnow-tlast);  //  Plotly.newPlot('moves',[{type: 'bar', y: tmove}])
     }; tlast=tnow;
 
     if (x!=next) {
       console.log("Wrong! You clicked ",x," instead of ",next);
-      mistakes++;
+      mistakes++; flawless=0; topstreak=streak; streak=0; 
       tag.style.background='red';
       boxes.forEach(function (tag,n) { tag.innerHTML=box[n] });
     } else {
-        //  tmove.sort(function(a,b){return a-b;});
- //       Plotly.newPlot('moves', [{type: 'bar', y: tmove}]); // {}, {showSendToCloud: true}]);
-
+        //  tmove.sort(function(a,b){return a-b;}); //  Plotly.newPlot('moves', [{type: 'bar', y: tmove}]); // {}, {showSendToCloud: true}]);
         tag.style.background='lime';
         boxes.forEach(function (tag,n) { tag.innerHTML='' });
         next++;
         if (x==nums) {  // game done
           tgame.push(tnow-tstart);        
-//          Plotly.newPlot('games',[{type: 'bar', y: tgame}])
-//          Plotly.react('games',[{type: 'histogram', x:tgame, xbins: {size:50,end:4000}}])
-//Plotly.react('viewtime',[{type: 'histogram', x: tview, xbins: { size:50,end:2000 }}])
-//Plotly.react('moves',[{type: 'histogram', x: tmove, xbins: { size:50,end:2000 }}])
-//Plotly.react('games',[{type: 'histogram', x: tgame, xbins: {size:50,end:4000}}])
 
+          //          Plotly.newPlot('games',[{type: 'bar', y: tgame}])
+          //          Plotly.react('games',[{type: 'histogram', x:tgame, xbins: {size:50,end:4000}}])
+          //Plotly.react('viewtime',[{type: 'histogram', x: tview, xbins: { size:50,end:2000 }}])
+          //Plotly.react('moves',[{type: 'histogram', x: tmove, xbins: { size:50,end:2000 }}])
+          //Plotly.react('games',[{type: 'histogram', x: tgame, xbins: {size:50,end:4000}}])
+          streak+=flawless; if (streak>topstreak) topstreak=streak;
+          streaktime+=(tnow-tstart); if (streaktime>topstreaktime) topstreaktime=streaktime;
           score.innerHTML="Done in "+(tnow-tstart)+"ms with "+mistakes+" mistakes!<br>"+score.innerHTML;
+          score.innerHTML="Current winning streak is "+streak+" in "+streaktime+"ms. Longest is "+topstreak+" games in "+topstreaktime+"ms !<br>"+score.innerHTML;
           shuffle(box); mistakes=0;
           boxes.forEach(function (tag,n) { tag.style.background=''; tag.innerHTML=box[n] });
           next=1;
