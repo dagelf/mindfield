@@ -117,7 +117,7 @@ boxes.forEach(function (tag,n) {
 
     if (x!=next) {
       console.log("Wrong! You clicked ",x," instead of ",next);
-      mistakes++; flawless=0; topstreak=streak; streak=0; streaktime=(tstart-tnow);
+      mistakes++; flawless=0; topstreak=streak; streak=0; streaktime=(tnow-tstart);
       tag.style.background='red';
       boxes.forEach(function (tag,n) { tag.innerHTML=box[n] });
     } else {
