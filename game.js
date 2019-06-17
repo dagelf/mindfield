@@ -110,14 +110,14 @@ boxes.forEach(function (tag,n) {
                 // todo hide numbers at start and show start button
       tstart=tnow;
       tview.push(tnow-tlast);  //  Plotly.newPlot('viewtime',[{type: 'bar', y: tview}])
-      flawless=1; 
+      flawless=1; if (streak==0) { streaktime=0; }
     } else {
       tmove.push(tnow-tlast);  //  Plotly.newPlot('moves',[{type: 'bar', y: tmove}])
     }; tlast=tnow;
 
     if (x!=next) {
       console.log("Wrong! You clicked ",x," instead of ",next);
-      mistakes++; flawless=0; topstreak=streak; streak=0; streaktime=(tnow-tstart);
+      mistakes++; flawless=0; streak=0;
       tag.style.background='red';
       boxes.forEach(function (tag,n) { tag.innerHTML=box[n] });
     } else {
