@@ -4,6 +4,8 @@ Are you faster than Ai? (Or do you have as much free choice? :-p) That's pretty 
 [Try it here](http://mindfield.surge.sh/) or run it on your own PC:
 
     git clone https://github.com/dagelf/mindfield.git 
+    
+And then browse to file:///home/myuser/mindfield, or wherever you put it.
 
 Or take the opportunity to set up better permissions on your filesystem - give yourself permissions in your /usr/src directory:
     
