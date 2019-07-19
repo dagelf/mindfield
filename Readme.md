@@ -1,15 +1,17 @@
 ## Introduction
 Are you faster than Ai? (Or do you have as much free choice? :-p) That's pretty impressive, but I'm not convinced by the "cognitive tradeoff hypothesis."
 
-[Click here to try it](http://mindfield.surge.sh/) or host it on your own PC so you can modify (improve) it by running:
+[Click here to try it](http://mindfield.surge.sh/) 
+
+Or even better, host it on your own PC so you can modify (improve) it by opening a terminal and typing:
 
     git clone https://github.com/dagelf/mindfield.git 
   
 (Or just download the [zip](https://github.com/dagelf/mindfield/archive/master.zip) and extract it)
     
-And then browse to file:///home/myuser/mindfield, or wherever you put it.
+And then browse to file:///home/myuser/src/mindfield, or wherever you put it. You can then change the code in your browser (and learn Javascript!) by following the instructions below for the "Easiest Javascript coding environment".
 
-Or take the opportunity to set up better permissions on your filesystem - give yourself permissions in your /usr/src directory:
+Now is a good time to take the opportunity to set up better permissions on your filesystem - give yourself permissions in your /usr/src directory (if you have root):
     
     sudo chgrp `whoami` /usr/src; sudo chmod g+s /usr/src 
     
