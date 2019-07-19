@@ -1,7 +1,7 @@
 ## Introduction
 Are you faster than Ai? (Or do you have as much free choice? :-p) That's pretty impressive, but I'm not convinced by the "cognitive tradeoff hypothesis."
 
-[Click here to try it](http://mindfield.surge.sh/) 
+[Click here to try it](http://mindfield.surge.sh/) (Touch screen required)
 
 Or even better, host it on your own PC so you can modify (improve) it by opening a terminal and typing:
 
@@ -10,6 +10,10 @@ Or even better, host it on your own PC so you can modify (improve) it by opening
 (Or just download the [zip](https://github.com/dagelf/mindfield/archive/master.zip) and extract it)
     
 And then browse to file:///home/myuser/src/mindfield, or wherever you put it. You can then change the code in your browser (and learn Javascript!) by following the instructions below for the "Easiest Javascript coding environment".
+
+If you don't have a touch screen you can just change "ontouch" in the code, to "onclick" :-)
+
+## Linux file permissions
 
 Now is a good time to take the opportunity to set up better permissions on your filesystem - give yourself permissions in your /usr/src directory (if you have root):
     
@@ -23,6 +27,8 @@ And then get it:
 
     mkdir -p /usr/src/github/dagelf; cd /usr/src/github/dagelf    
     git clone https://github.com/dagelf/mindfield.git 
+    
+## Inspiration    
 
 This is a quick javascript implementation of a game inspired by the chimp game featured on Vsauce [Mind field](https://www.youtube.com/playlist?list=PLZRRxQcaEjA4qyEuYfAMCazlL0vQDkIj2) Season 3, Episode 1: [The Cognitive Tradeoff Hypothesis](https://www.youtube.com/watch?v=ktkjUjcZid0) 
 
