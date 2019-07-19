@@ -1,13 +1,21 @@
 ## Introduction
 Are you faster than Ai? (Or do you have as much free choice? :-p) That's pretty impressive, but I'm not convinced by the "cognitive tradeoff hypothesis."
 
-[Try it here](http://mindfield.surge.sh/) or run it on your own PC:
+[Click here to try it](http://mindfield.surge.sh/) (Touch screen required)
+
+Or even better, host it on your own PC so you can modify (improve) it by opening a terminal and typing:
 
     git clone https://github.com/dagelf/mindfield.git 
+  
+(Or just download the [zip](https://github.com/dagelf/mindfield/archive/master.zip) and extract it)
     
-And then browse to file:///home/myuser/mindfield, or wherever you put it.
+And then browse to file:///home/myuser/src/mindfield, or wherever you put it. You can then change the code in your browser (and learn Javascript!) by following the instructions below for the "Easiest Javascript coding environment".
 
-Or take the opportunity to set up better permissions on your filesystem - give yourself permissions in your /usr/src directory:
+If you don't have a touch screen you can just change "ontouch" in the code, to "onclick" :-)
+
+## Linux file permissions
+
+Now is a good time to take the opportunity to set up better permissions on your filesystem - give yourself permissions in your /usr/src directory (if you have root):
     
     sudo chgrp `whoami` /usr/src; sudo chmod g+s /usr/src 
     
@@ -19,8 +27,10 @@ And then get it:
 
     mkdir -p /usr/src/github/dagelf; cd /usr/src/github/dagelf    
     git clone https://github.com/dagelf/mindfield.git 
+    
+## Inspiration    
 
-This is a quick javascript implementation of a game similar to the chimp game featured on Vsauce [Mindfield EP1](https://www.youtube.com/watch?v=iqKdEhx-dD4)
+This is a quick javascript implementation of a game inspired by the chimp game featured on Vsauce [Mind field](https://www.youtube.com/playlist?list=PLZRRxQcaEjA4qyEuYfAMCazlL0vQDkIj2) Season 3, Episode 1: [The Cognitive Tradeoff Hypothesis](https://www.youtube.com/watch?v=ktkjUjcZid0) 
 
 This was my first attempt at a javascript app, and purist that I am, I opted for "Vanilla JS". It was also a great excercise in getting a javascript development environment set up - which took longer than the actual game... After spending about an hour trying to get Firefox working, and downloading Developer version, after finding dead links linked to from their latest version browser, I threw in the towel and went Chrome. 
 
