@@ -20,7 +20,7 @@ And then get it:
     mkdir -p /usr/src/github/dagelf; cd /usr/src/github/dagelf    
     git clone https://github.com/dagelf/mindfield.git 
 
-This is a quick javascript implementation of a game inspired by the chimp game featured on Vsauce [Mind field](https://www.youtube.com/playlist?list=PLZRRxQcaEjA4qyEuYfAMCazlL0vQDkIj2) [The Cognitive Tradeoff Hypothesis Season 3 (Episode 1)](https://www.youtube.com/watch?v=iqKdEhx-dD4) 
+This is a quick javascript implementation of a game inspired by the chimp game featured on Vsauce [Mind field](https://www.youtube.com/playlist?list=PLZRRxQcaEjA4qyEuYfAMCazlL0vQDkIj2) Season 3, Episode 1: [The Cognitive Tradeoff Hypothesis](https://www.youtube.com/watch?v=ktkjUjcZid0) 
 
 This was my first attempt at a javascript app, and purist that I am, I opted for "Vanilla JS". It was also a great excercise in getting a javascript development environment set up - which took longer than the actual game... After spending about an hour trying to get Firefox working, and downloading Developer version, after finding dead links linked to from their latest version browser, I threw in the towel and went Chrome. 
 
