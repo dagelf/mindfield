@@ -91,6 +91,8 @@ stats to gather:
     syntax errors - good ide and runtime command line can help a lot
     keeping track of brackets - coffeescript?
 */
+//about=document.getElementById('about');
+document.getElementById('about').addEventListener('touchstart',function(m) { m.currentTarget.innerHTML='';})
 
 score=document.getElementById('score');
 next=1,tstart=0,mistakes=0,best=10000,tlast=Date.now();
