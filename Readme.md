@@ -1,7 +1,7 @@
 ## Introduction
 Are you faster than Ai? (Or do you have as much free choice? :-p) That's pretty impressive, but I'm not convinced by the "cognitive tradeoff hypothesis."
 
-[Try it here](http://mindfield.surge.sh/) or run it on your own PC:
+[Try it here](http://mindfield.surge.sh/) or host it on your own PC so you can modify (improve) it:
 
     git clone https://github.com/dagelf/mindfield.git 
     
