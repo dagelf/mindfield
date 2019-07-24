@@ -92,7 +92,7 @@ stats to gather:
     keeping track of brackets - coffeescript?
 */
 //about=document.getElementById('about');
-document.getElementById('about').addEventListener('touchstart',function(m) { m.currentTarget.innerHTML='';})
+document.getElementById('about').addEventListener('mousedown',function(m) { m.currentTarget.innerHTML='';})
 
 score=document.getElementById('score');
 next=1,tstart=0,mistakes=0,best=10000,tlast=Date.now();
@@ -101,8 +101,8 @@ tgame=[],tmove=[],tview=[],flawless=0,topstreak=0,streak=0,streaktime=0,topstrea
 
 var boxes = document.querySelectorAll('li');
 boxes.forEach(function (tag,n) {
-// #fixme onclick if no touchscreen, but need to find workaround for firefox click delay 
-  tag.addEventListener('touchstart', function (m) {
+// #fixme 'mousedown' instead of 'touchstart' if no touchscreen, but need to find workaround for firefox click delay 
+  tag.addEventListener('mousedown', function (m) {
     tnow=Date.now(); 
     console.log(tnow-tlast,"ms") 
     m.preventDefault(); // disable scroll - and supposedly improves browser response time
