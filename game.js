@@ -102,7 +102,7 @@ tgame=[],tmove=[],tview=[],flawless=0,topstreak=0,streak=0,streaktime=0,topstrea
 var boxes = document.querySelectorAll('li');
 boxes.forEach(function (tag,n) {
 // #fixme 'mousedown' instead of 'touchstart' if no touchscreen, but need to find workaround for firefox click delay 
-  tag.addEventListener('mousedown', function (m) {
+  tag.addEventListener('touchstart', function (m) {
     tnow=Date.now(); 
     console.log(tnow-tlast,"ms") 
     m.preventDefault(); // disable scroll - and supposedly improves browser response time
