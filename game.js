@@ -92,7 +92,7 @@ stats to gather:
     keeping track of brackets - coffeescript?
 */
 //about=document.getElementById('about');
-document.getElementById('about').addEventListener('mousedown',function(m) { m.currentTarget.innerHTML='';})
+document.getElementById('about').addEventListener('mouseup',function(m) { m.currentTarget.innerHTML='';})
 
 score=document.getElementById('score');
 next=1,tstart=0,mistakes=0,best=10000,tlast=Date.now();
