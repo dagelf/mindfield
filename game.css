@@ -270,11 +270,10 @@ body {
   margin: 0 auto 30px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 li {
-  float: left;
   list-style: none;
   border: solid;
   border-width: 3px;
@@ -294,6 +293,7 @@ li {
   align-items: center;
   justify-content: center;
   background: white;
+  flex-shrink: 0;
 }
 
 li:hover {

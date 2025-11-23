@@ -83,10 +83,20 @@ function shuffle(a) {
 function calculateDimensions() {
   ww = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
   wh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-  w = Math.min(Math.min(wh, ww) - 40, cols * size);
+
   btot = rows * cols;
-  bx = w / cols - 8; // Subtract margin space (4px * 2)
+
+  // Calculate box size accounting for margins and padding
+  // Container padding: 10px * 2 = 20px
+  // Each box margin: 4px * 2 = 8px per box
+  // Total width needed: cols * (bx + 8) + 20
+  const maxWidth = Math.min(wh, ww) - 60; // Leave some margin
+  w = Math.min(maxWidth, cols * size);
+  bx = (w - 20) / cols - 8; // Subtract container padding and box margins
   by = bx;
+
+  // Update w to actual needed width
+  w = cols * (bx + 8) + 20;
 }
 
 // Apply dynamic CSS for board sizing
@@ -514,10 +524,16 @@ function previewBoard() {
   // Calculate preview dimensions
   const ww = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
   const wh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-  const w = Math.min(Math.min(wh, ww) - 40, previewCols * size);
   const btot = previewRows * previewCols;
-  const bx = w / previewCols - 8; // Subtract margin space
+
+  // Calculate box size accounting for margins and padding
+  const maxWidth = Math.min(wh, ww) - 60;
+  let w = Math.min(maxWidth, previewCols * size);
+  const bx = (w - 20) / previewCols - 8;
   const by = bx;
+
+  // Update w to actual needed width
+  w = previewCols * (bx + 8) + 20;
 
   // Apply preview CSS
   const css = `#game { width: ${w}px; } li { width: ${bx}px; height: ${by}px; font-size: ${bx - 9}px; text-align: center; }`;
