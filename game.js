@@ -61,12 +61,44 @@ let box = [];
 let boxes;
 let next = 1;
 let tstart = 0;
+let tboardStart = 0; // Time when board was generated/revealed
 let mistakes = 0;
 let best = 10000;
 let tlast = Date.now();
 let tgame = [], tmove = [], tview = [];
 let flawless = 0, topstreak = 0, streak = 0, streaktime = 0, topstreaktime = 0;
 let gameStarted = false;
+
+// Advanced analytics
+let fastestByNumber = {}; // Fastest time for each number transition (1→2, 2→3, etc.)
+let fastestByDistance = {}; // Fastest time by Manhattan distance
+let lastPosition = null; // Track last clicked position for distance calculation
+
+// Load analytics from localStorage
+function loadAnalytics() {
+  try {
+    const saved = localStorage.getItem('chimp-game-analytics');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      fastestByNumber = parsed.fastestByNumber || {};
+      fastestByDistance = parsed.fastestByDistance || {};
+    }
+  } catch (e) {
+    console.log('Could not load analytics:', e);
+  }
+}
+
+// Save analytics to localStorage
+function saveAnalytics() {
+  try {
+    localStorage.setItem('chimp-game-analytics', JSON.stringify({
+      fastestByNumber,
+      fastestByDistance
+    }));
+  } catch (e) {
+    console.log('Could not save analytics:', e);
+  }
+}
 
 // Utility: shuffle array
 function shuffle(a) {
@@ -141,24 +173,35 @@ function initBoard() {
   // Reset game state
   next = 1;
   mistakes = 0;
-  tlast = Date.now();
+  lastPosition = null; // Reset position tracking
+  const now = Date.now();
+  tlast = now;
+  tboardStart = now;
   gameStarted = !config.hideNumbersAtStart;
 
-  // Attach event listeners
-  attachEventListeners();
+  // Note: Event listeners are attached via event delegation on #game element
+  // See setupEventDelegation() - no need to attach/remove listeners per board
 }
 
-// Attach event listeners to board
-function attachEventListeners() {
-  boxes = document.querySelectorAll('#game li');
-  boxes.forEach((tag, n) => {
-    tag.addEventListener(config.eventType, handleClick);
-  });
+// Calculate position from index
+function getPosition(index) {
+  const row = Math.floor(index / cols);
+  const col = index % cols;
+  return { row, col };
+}
+
+// Calculate Manhattan distance between two positions
+function getManhattanDistance(pos1, pos2) {
+  return Math.abs(pos1.row - pos2.row) + Math.abs(pos1.col - pos2.col);
 }
 
 // Handle click/touch on a box
 function handleClick(m) {
   m.preventDefault(); // disable scroll and improve browser response time
+
+  // Handle event delegation - get the li element
+  const tag = m.target.closest('li');
+  if (!tag) return;
 
   const tnow = Date.now();
   const timeDiff = tnow - tlast;
@@ -172,14 +215,14 @@ function handleClick(m) {
     console.log(timeDiff, "ms");
   }
 
-  const tag = m.currentTarget;
   const n = parseInt(tag.dataset.index);
   const x = box[n]; // number clicked on
 
   // Start game on first click if numbers are hidden
   if (!gameStarted && config.hideNumbersAtStart) {
     gameStarted = true;
-    boxes.forEach((t, i) => {
+    tboardStart = tnow; // Reset board start time when revealing
+    document.querySelectorAll('#game li').forEach((t, i) => {
       t.innerHTML = box[i];
     });
     tlast = tnow;
@@ -188,13 +231,46 @@ function handleClick(m) {
 
   if (x == 1) {
     tstart = tnow;
-    tview.push(timeDiff);
+    // Track time from board start to first click (true reaction time)
+    const reactionTime = tnow - tboardStart;
+    tview.push(reactionTime);
+
+    // Limit array size to prevent memory issues
+    if (tview.length > 1000) {
+      tview.shift();
+    }
+
     flawless = 1;
     if (streak == 0) {
       streaktime = 0;
     }
-  } else {
+    lastPosition = getPosition(n);
+  } else if (x == next) {
+    // Track move time
     tmove.push(timeDiff);
+
+    // Limit array size
+    if (tmove.length > 1000) {
+      tmove.shift();
+    }
+
+    // Track fastest by number transition
+    const transition = `${next - 1}→${next}`;
+    if (!fastestByNumber[transition] || timeDiff < fastestByNumber[transition]) {
+      fastestByNumber[transition] = timeDiff;
+      saveAnalytics(); // Persist when we get a new record
+    }
+
+    // Track fastest by distance
+    if (lastPosition) {
+      const currentPos = getPosition(n);
+      const distance = getManhattanDistance(lastPosition, currentPos);
+      if (!fastestByDistance[distance] || timeDiff < fastestByDistance[distance]) {
+        fastestByDistance[distance] = timeDiff;
+        saveAnalytics(); // Persist when we get a new record
+      }
+      lastPosition = currentPos;
+    }
   }
   tlast = tnow;
 
@@ -205,13 +281,13 @@ function handleClick(m) {
     flawless = 0;
     streak = 0;
     tag.style.background = 'red';
-    boxes.forEach((t, i) => {
+    document.querySelectorAll('#game li').forEach((t, i) => {
       t.innerHTML = box[i];
     });
   } else {
     // Correct click
     tag.style.background = 'lime';
-    boxes.forEach((t) => {
+    document.querySelectorAll('#game li').forEach((t) => {
       t.innerHTML = '';
     });
     next++;
@@ -220,6 +296,11 @@ function handleClick(m) {
       // Game complete
       const gameTime = tnow - tstart;
       tgame.push(gameTime);
+
+      // Limit array size
+      if (tgame.length > 1000) {
+        tgame.shift();
+      }
 
       if (flawless == 1) {
         streak += 1;
@@ -235,15 +316,24 @@ function handleClick(m) {
       // Reset for next game
       shuffle(box);
       mistakes = 0;
-      boxes.forEach((t, i) => {
+      lastPosition = null; // Reset position tracking for new game
+      document.querySelectorAll('#game li').forEach((t, i) => {
         t.style.background = '';
         const show = config.hideNumbersAtStart ? '' : box[i];
         t.innerHTML = show;
       });
       next = 1;
+      const now = Date.now();
+      tboardStart = now; // Reset board start time for new game
       gameStarted = !config.hideNumbersAtStart;
     }
   }
+}
+
+// Setup event delegation on game board
+function setupEventDelegation() {
+  const gameBoard = document.getElementById('game');
+  gameBoard.addEventListener(config.eventType, handleClick);
 }
 
 // Update score display
@@ -266,9 +356,12 @@ function updateScore(gameTime, mistakes, streak, streaktime, topstreak, topstrea
     html += `<div class="score-entry">Best streak: ${topstreak} ${topStreakGameText} in ${topstreaktime}ms</div>`;
   }
 
+  // Add analytics if available
+  html += getAnalyticsHTML();
+
   score.innerHTML = html + score.innerHTML;
 
-  // Keep only last 10 game results
+  // Keep only last 20 entries (including analytics)
   const entries = score.querySelectorAll('.score-entry');
   if (entries.length > 20) {
     for (let i = 20; i < entries.length; i++) {
@@ -278,6 +371,42 @@ function updateScore(gameTime, mistakes, streak, streaktime, topstreak, topstrea
 
   // Update graphs with new data
   updateGraphs();
+}
+
+// Generate analytics HTML
+function getAnalyticsHTML() {
+  let html = '';
+
+  // Display fastest by number transition
+  const transitions = Object.keys(fastestByNumber).sort((a, b) => {
+    const aNum = parseInt(a.split('→')[0]);
+    const bNum = parseInt(b.split('→')[0]);
+    return aNum - bNum;
+  });
+
+  if (transitions.length > 0) {
+    const top3 = transitions.slice(0, 3).map(t =>
+      `${t}: ${fastestByNumber[t]}ms`
+    ).join(' | ');
+    html += `<div class="score-entry analytics">⚡ Fastest transitions: ${top3}</div>`;
+  }
+
+  // Display fastest by distance
+  const distances = Object.keys(fastestByDistance).sort((a, b) => parseInt(a) - parseInt(b));
+  if (distances.length > 0) {
+    const distanceLabels = {
+      '1': 'Adjacent',
+      '2': 'Distance 2',
+      '3': 'Distance 3',
+      '4': 'Distance 4'
+    };
+    const distanceStats = distances.slice(0, 4).map(d =>
+      `${distanceLabels[d] || `Dist ${d}`}: ${fastestByDistance[d]}ms`
+    ).join(' | ');
+    html += `<div class="score-entry analytics">📏 Fastest by distance: ${distanceStats}</div>`;
+  }
+
+  return html;
 }
 
 // Toggle settings menu
@@ -586,6 +715,12 @@ function previewBoard() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
+  // Load saved analytics
+  loadAnalytics();
+
+  // Setup event delegation for game board
+  setupEventDelegation();
+
   // Hide about message on click
   document.getElementById('about').addEventListener('mouseup', function(m) {
     m.currentTarget.style.display = 'none';

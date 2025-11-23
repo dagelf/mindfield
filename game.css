@@ -360,6 +360,12 @@ li:active {
   border-left: 4px solid #ffd700;
 }
 
+.score-entry.analytics {
+  background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+  border-left: 4px solid #00bcd4;
+  font-size: 14px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .settings-menu {
