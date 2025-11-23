@@ -16,18 +16,19 @@
     <h2>Game Settings</h2>
 
     <div class="setting-group">
-      <label for="setting-rows">Rows:</label>
-      <input type="number" id="setting-rows" min="1" max="10" value="4">
+      <label for="setting-rows">Rows: <span id="rows-value">4</span></label>
+      <input type="range" id="setting-rows" min="1" max="10" value="4" step="1">
     </div>
 
     <div class="setting-group">
-      <label for="setting-cols">Columns:</label>
-      <input type="number" id="setting-cols" min="1" max="10" value="4">
+      <label for="setting-cols">Columns: <span id="cols-value">4</span></label>
+      <input type="range" id="setting-cols" min="1" max="10" value="4" step="1">
     </div>
 
     <div class="setting-group">
-      <label for="setting-nums">Numbers:</label>
-      <input type="number" id="setting-nums" min="1" max="20" value="7">
+      <label for="setting-nums">Numbers: <span id="nums-value">7</span></label>
+      <input type="range" id="setting-nums" min="1" max="100" value="7" step="1">
+      <small>Max: <span id="nums-max">16</span></small>
     </div>
 
     <div class="setting-group checkbox-group">
@@ -41,6 +42,13 @@
       <label>
         <input type="checkbox" id="setting-hide-numbers">
         Hide numbers at start (click to reveal)
+      </label>
+    </div>
+
+    <div class="setting-group checkbox-group">
+      <label>
+        <input type="checkbox" id="setting-show-graphs">
+        Show performance graphs (requires page reload)
       </label>
     </div>
 
@@ -83,7 +91,19 @@
 <!-- Score Display -->
 <div id="score"></div>
 
-<!--script src="https://cdn.plot.ly/plotly-latest.min.js"></script-->
+<script>
+  // Load Plotly if graphs are enabled
+  if (localStorage.getItem('chimp-game-config')) {
+    try {
+      const config = JSON.parse(localStorage.getItem('chimp-game-config'));
+      if (config.showGraphs) {
+        document.write('<script src="https://cdn.plot.ly/plotly-latest.min.js"><\/script>');
+      }
+    } catch (e) {
+      console.log('Could not check graph settings:', e);
+    }
+  }
+</script>
 <script src="game.js"></script>
 </body>
 </html>

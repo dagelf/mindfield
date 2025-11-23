@@ -6,13 +6,17 @@
 }
 
 body, html {
-  display: flex;
-  flex-wrap: wrap;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   padding: 20px;
   color: #333;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Settings Button */
@@ -83,18 +87,59 @@ body, html {
   color: #555;
 }
 
-.setting-group input[type="number"] {
+.setting-group input[type="range"] {
   width: 100%;
-  padding: 12px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.3s ease;
+  height: 6px;
+  border-radius: 3px;
+  background: #ddd;
+  outline: none;
+  -webkit-appearance: none;
+  margin: 10px 0;
 }
 
-.setting-group input[type="number"]:focus {
-  outline: none;
-  border-color: #667eea;
+.setting-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.setting-group input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.setting-group input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s ease;
+}
+
+.setting-group input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+.setting-group label span {
+  font-weight: bold;
+  color: #667eea;
+  min-width: 30px;
+  display: inline-block;
+  text-align: right;
+}
+
+.setting-group small {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #999;
+  font-weight: normal;
 }
 
 .checkbox-group label {
@@ -217,11 +262,15 @@ body, html {
 /* Game Board */
 #game {
   padding: 10px;
-  width: 800px;
+  width: 100%;
+  max-width: 800px;
   background: white;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   margin: 0 auto 30px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 li {
@@ -257,39 +306,26 @@ li:active {
 }
 
 /* Graph Containers */
-#viewtime {
-  left: 100px;
-  height: 350px;
+#viewtime, #moves, #games {
+  width: 100%;
+  max-width: 800px;
+  min-height: 350px;
   background: white;
   border-radius: 16px;
-  margin: 20px;
+  margin: 20px auto;
   padding: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  display: none; /* Hidden by default */
 }
 
-#moves {
-  left: 100px;
-  height: 350px;
-  background: white;
-  border-radius: 16px;
-  margin: 20px;
-  padding: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-#games {
-  height: 350px;
-  background: white;
-  border-radius: 16px;
-  margin: 20px;
-  padding: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+#viewtime.visible, #moves.visible, #games.visible {
+  display: block;
 }
 
 /* Score Display */
 #score {
-  min-width: 300px;
-  max-width: 600px;
+  width: 100%;
+  max-width: 800px;
   background: white;
   border-radius: 16px;
   padding: 20px;

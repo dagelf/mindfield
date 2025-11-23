@@ -6,6 +6,7 @@ let config = {
   size: 300,
   showTiming: true,
   hideNumbersAtStart: false,
+  showGraphs: false,
   eventType: null // will be auto-detected
 };
 
@@ -115,23 +116,17 @@ function initBoard() {
   applyDynamicCSS();
 
   // Fill box array with numbers and blanks, then shuffle
-  box = [];
-  for (let i = 1; i <= btot + 1; i++) {
-    if (i <= nums) {
-      box.push(i);
-    } else {
-      box.push('');
-    }
-  }
+  // Optimized: use Array.from and ternary
+  box = Array.from({ length: btot + 1 }, (_, i) => i < nums ? i + 1 : '');
   shuffle(box);
 
-  // Create board HTML
-  let output = '';
-  for (let i = 0; i <= btot; i++) {
-    const show = config.hideNumbersAtStart ? '' : box[i];
-    output += `<li data-index="${i}">${show}</li>`;
-  }
-  document.getElementById('game').innerHTML = output;
+  // Create board HTML using array map (more efficient)
+  const boardHTML = box.map((value, i) => {
+    const display = config.hideNumbersAtStart ? '' : value;
+    return `<li data-index="${i}">${display}</li>`;
+  }).join('');
+
+  document.getElementById('game').innerHTML = boardHTML;
 
   // Reset game state
   next = 1;
@@ -153,14 +148,19 @@ function attachEventListeners() {
 
 // Handle click/touch on a box
 function handleClick(m) {
+  m.preventDefault(); // disable scroll and improve browser response time
+
   const tnow = Date.now();
   const timeDiff = tnow - tlast;
+
+  // Optimization: prevent rapid duplicate clicks (debounce)
+  if (timeDiff < 10) {
+    return;
+  }
 
   if (config.showTiming) {
     console.log(timeDiff, "ms");
   }
-
-  m.preventDefault(); // disable scroll and improve browser response time
 
   const tag = m.currentTarget;
   const n = parseInt(tag.dataset.index);
@@ -243,13 +243,16 @@ function updateScore(gameTime, mistakes, streak, streaktime, topstreak, topstrea
   html += `<div class="score-entry">Current streak: ${streak} games in ${streaktime}ms. Best: ${topstreak} games in ${topstreaktime}ms!</div>`;
   score.innerHTML = html + score.innerHTML;
 
-  // Keep only last 10 scores
+  // Keep only last 10 game results (20 entries, 2 per game)
   const entries = score.querySelectorAll('.score-entry');
   if (entries.length > 20) {
     for (let i = 20; i < entries.length; i++) {
       entries[i].remove();
     }
   }
+
+  // Update graphs with new data
+  updateGraphs();
 }
 
 // Toggle settings menu
@@ -260,19 +263,46 @@ function toggleSettings() {
 
 // Apply settings from menu
 function applySettings() {
-  config.rows = parseInt(document.getElementById('setting-rows').value);
-  config.cols = parseInt(document.getElementById('setting-cols').value);
-  config.nums = parseInt(document.getElementById('setting-nums').value);
+  const oldShowGraphs = config.showGraphs;
+
+  const rows = parseInt(document.getElementById('setting-rows').value);
+  const cols = parseInt(document.getElementById('setting-cols').value);
+  const nums = parseInt(document.getElementById('setting-nums').value);
+
+  // Validate settings
+  if (rows < 1 || cols < 1 || nums < 1) {
+    alert('Rows, columns, and numbers must be at least 1!');
+    return;
+  }
+
+  const maxBoxes = rows * cols;
+  if (nums > maxBoxes) {
+    alert(`Numbers (${nums}) cannot exceed total boxes (${maxBoxes})!`);
+    return;
+  }
+
+  config.rows = rows;
+  config.cols = cols;
+  config.nums = nums;
   config.showTiming = document.getElementById('setting-timing').checked;
   config.hideNumbersAtStart = document.getElementById('setting-hide-numbers').checked;
+  config.showGraphs = document.getElementById('setting-show-graphs').checked;
 
   saveConfig();
+
+  // Notify if graphs setting changed
+  if (oldShowGraphs !== config.showGraphs) {
+    alert('Graph settings changed. Please reload the page (F5) for changes to take effect.');
+  }
+
   initBoard();
   toggleSettings();
 }
 
 // Reset to defaults
 function resetSettings() {
+  const oldShowGraphs = config.showGraphs;
+
   config = {
     rows: 4,
     cols: 4,
@@ -280,11 +310,17 @@ function resetSettings() {
     size: 300,
     showTiming: true,
     hideNumbersAtStart: false,
+    showGraphs: false,
     eventType: config.eventType
   };
   saveConfig();
   updateSettingsUI();
   initBoard();
+
+  // Notify if graphs setting changed
+  if (oldShowGraphs !== config.showGraphs) {
+    alert('Graph settings changed. Please reload the page (F5) for changes to take effect.');
+  }
 }
 
 // Update settings UI with current config
@@ -294,6 +330,17 @@ function updateSettingsUI() {
   document.getElementById('setting-nums').value = config.nums;
   document.getElementById('setting-timing').checked = config.showTiming;
   document.getElementById('setting-hide-numbers').checked = config.hideNumbersAtStart;
+  document.getElementById('setting-show-graphs').checked = config.showGraphs;
+
+  // Update slider display values
+  document.getElementById('rows-value').textContent = config.rows;
+  document.getElementById('cols-value').textContent = config.cols;
+  document.getElementById('nums-value').textContent = config.nums;
+
+  // Update max numbers
+  const maxNums = config.rows * config.cols;
+  document.getElementById('nums-max').textContent = maxNums;
+  document.getElementById('setting-nums').max = maxNums;
 }
 
 // Handle window resize
@@ -304,6 +351,147 @@ function handleResize() {
     calculateDimensions();
     applyDynamicCSS();
   }, 250);
+}
+
+// Remove unused graph divs if graphs are not enabled
+function removeUnusedDivs() {
+  if (!config.showGraphs || typeof Plotly === 'undefined') {
+    const viewtime = document.getElementById('viewtime');
+    const moves = document.getElementById('moves');
+    const games = document.getElementById('games');
+
+    if (viewtime) viewtime.remove();
+    if (moves) moves.remove();
+    if (games) games.remove();
+  }
+}
+
+// Initialize graphs if Plotly is available
+function initGraphs() {
+  if (typeof Plotly !== 'undefined' && config.showGraphs) {
+    document.getElementById('viewtime').classList.add('visible');
+    document.getElementById('moves').classList.add('visible');
+    document.getElementById('games').classList.add('visible');
+
+    Plotly.newPlot('viewtime', [{
+      type: 'histogram',
+      x: tview,
+      xbins: { size: 50, end: 2000 },
+      name: 'View Time',
+      marker: { color: '#667eea' }
+    }], {
+      title: 'Time to First Click (ms)',
+      xaxis: { title: 'Time (ms)' },
+      yaxis: { title: 'Frequency' }
+    });
+
+    Plotly.newPlot('moves', [{
+      type: 'histogram',
+      x: tmove,
+      xbins: { size: 50, end: 2000 },
+      name: 'Move Time',
+      marker: { color: '#764ba2' }
+    }], {
+      title: 'Time Between Clicks (ms)',
+      xaxis: { title: 'Time (ms)' },
+      yaxis: { title: 'Frequency' }
+    });
+
+    Plotly.newPlot('games', [{
+      type: 'histogram',
+      x: tgame,
+      xbins: { size: 50, end: 4000 },
+      name: 'Game Time',
+      marker: { color: '#667eea' }
+    }], {
+      title: 'Total Game Time (ms)',
+      xaxis: { title: 'Time (ms)' },
+      yaxis: { title: 'Frequency' }
+    });
+  }
+}
+
+// Update graphs with new data
+function updateGraphs() {
+  if (typeof Plotly !== 'undefined' && config.showGraphs) {
+    Plotly.react('viewtime', [{
+      type: 'histogram',
+      x: tview,
+      xbins: { size: 50, end: 2000 },
+      marker: { color: '#667eea' }
+    }]);
+
+    Plotly.react('moves', [{
+      type: 'histogram',
+      x: tmove,
+      xbins: { size: 50, end: 2000 },
+      marker: { color: '#764ba2' }
+    }]);
+
+    Plotly.react('games', [{
+      type: 'histogram',
+      x: tgame,
+      xbins: { size: 50, end: 4000 },
+      marker: { color: '#667eea' }
+    }]);
+  }
+}
+
+// Live preview of board as sliders change
+function previewBoard() {
+  const previewRows = parseInt(document.getElementById('setting-rows').value);
+  const previewCols = parseInt(document.getElementById('setting-cols').value);
+  const previewNums = parseInt(document.getElementById('setting-nums').value);
+
+  // Update displayed values
+  document.getElementById('rows-value').textContent = previewRows;
+  document.getElementById('cols-value').textContent = previewCols;
+  document.getElementById('nums-value').textContent = previewNums;
+
+  // Update max numbers based on grid size
+  const maxNums = previewRows * previewCols;
+  document.getElementById('nums-max').textContent = maxNums;
+  document.getElementById('setting-nums').max = maxNums;
+
+  // Clamp numbers to max
+  if (previewNums > maxNums) {
+    document.getElementById('setting-nums').value = maxNums;
+    document.getElementById('nums-value').textContent = maxNums;
+  }
+
+  // Create temporary preview configuration
+  const tempConfig = {
+    rows: previewRows,
+    cols: previewCols,
+    nums: previewNums,
+    hideNumbersAtStart: config.hideNumbersAtStart
+  };
+
+  // Calculate preview dimensions
+  const ww = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  const wh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  const w = Math.min(Math.min(wh, ww) - 40, previewRows * size);
+  const btot = previewRows * previewCols - 1;
+  const bx = w / previewRows - 2;
+  const by = bx;
+
+  // Apply preview CSS
+  const css = `#game { width: ${w}px; } li { width: ${bx}px; height: ${by}px; font-size: ${bx - 9}px; text-align: center; }`;
+  let style = document.getElementById('dynamic-style');
+  if (style) {
+    style.textContent = css;
+  }
+
+  // Create preview board
+  const previewBox = Array.from({ length: btot + 1 }, (_, i) => i < previewNums ? i + 1 : '');
+  shuffle(previewBox);
+
+  const boardHTML = previewBox.map((value, i) => {
+    const display = tempConfig.hideNumbersAtStart ? '' : value;
+    return `<li data-index="${i}">${display}</li>`;
+  }).join('');
+
+  document.getElementById('game').innerHTML = boardHTML;
 }
 
 // Initialize on page load
@@ -319,11 +507,22 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('reset-settings').addEventListener('click', resetSettings);
   document.getElementById('close-settings').addEventListener('click', toggleSettings);
 
+  // Live preview sliders
+  document.getElementById('setting-rows').addEventListener('input', previewBoard);
+  document.getElementById('setting-cols').addEventListener('input', previewBoard);
+  document.getElementById('setting-nums').addEventListener('input', previewBoard);
+
   // Update settings UI
   updateSettingsUI();
 
+  // Remove unused divs if graphs are not enabled
+  removeUnusedDivs();
+
   // Initialize board
   initBoard();
+
+  // Initialize graphs if enabled
+  initGraphs();
 
   // Handle window resize
   window.addEventListener('resize', handleResize);
