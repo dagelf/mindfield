@@ -1,34 +1,364 @@
-body,html {
+/* Reset and Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
   display: flex;
-  flex-wrap: wrap;  
-  font-family: mono;
+  flex-wrap: wrap;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+  color: #333;
 }
+
+/* Settings Button */
+.settings-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 50%;
+  background: white;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.settings-btn:hover {
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.settings-btn:active {
+  transform: scale(0.95) rotate(90deg);
+}
+
+/* Settings Menu */
+.settings-menu {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 100%;
+  max-width: 400px;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease;
+  z-index: 999;
+  overflow-y: auto;
+}
+
+.settings-menu.open {
+  right: 0;
+}
+
+.settings-content {
+  padding: 30px;
+}
+
+.settings-content h2 {
+  margin-bottom: 30px;
+  color: #667eea;
+  font-size: 28px;
+  border-bottom: 3px solid #667eea;
+  padding-bottom: 10px;
+}
+
+.setting-group {
+  margin-bottom: 20px;
+}
+
+.setting-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+}
+
+.setting-group input[type="number"] {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.setting-group input[type="number"]:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.settings-buttons {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: #f0f0f0;
+  color: #555;
+}
+
+.btn-secondary:hover {
+  background: #e0e0e0;
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* About Section */
+.about-section {
+  position: relative;
+  width: 100%;
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.about-content h3 {
+  color: #667eea;
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.about-content p {
+  margin-bottom: 12px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.about-content a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.about-content a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.about-content .note {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 2px solid #f0f0f0;
+  font-size: 14px;
+  color: #999;
+  font-style: italic;
+  text-align: center;
+}
+
+.about-section:hover {
+  cursor: pointer;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Game Board */
 #game {
- padding: 10px;
- width:  800;
+  padding: 10px;
+  width: 800px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  margin: 0 auto 30px;
 }
+
 li {
   float: left;
   list-style: none;
   border: solid;
-  border-width: 2px;
-  margin: -1px;
+  border-width: 3px;
+  border-color: #667eea;
+  border-radius: 8px;
+  margin: 4px;
   width: 99px;
   height: 99px;
   font-size: 90px;
   text-align: center;
-} 
+  font-weight: bold;
+  color: #667eea;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+}
+
+li:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+li:active {
+  transform: scale(0.95);
+}
+
+/* Graph Containers */
 #viewtime {
-  left:100px;
+  left: 100px;
   height: 350px;
+  background: white;
+  border-radius: 16px;
+  margin: 20px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
+
 #moves {
-  left:100px;
+  left: 100px;
   height: 350px;
+  background: white;
+  border-radius: 16px;
+  margin: 20px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
+
 #games {
   height: 350px;
+  background: white;
+  border-radius: 16px;
+  margin: 20px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
+
+/* Score Display */
 #score {
-   min-width: 300px;
+  min-width: 300px;
+  max-width: 600px;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.score-entry {
+  padding: 12px;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  animation: fadeIn 0.3s ease;
+  font-weight: 500;
+  color: #555;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.score-entry:first-child {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-left: 4px solid #ffd700;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .settings-menu {
+    max-width: 100%;
+  }
+
+  .about-section {
+    padding: 20px;
+  }
+
+  .about-content h3 {
+    font-size: 20px;
+  }
+
+  .settings-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    top: 10px;
+    right: 10px;
+  }
+
+  #game {
+    margin: 0 auto 20px;
+  }
+
+  #score {
+    margin: 10px;
+  }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  body, html {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  }
 }
