@@ -83,9 +83,9 @@ function shuffle(a) {
 function calculateDimensions() {
   ww = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
   wh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-  w = Math.min(Math.min(wh, ww) - 40, rows * size);
-  btot = rows * cols - 1;
-  bx = w / rows - 2;
+  w = Math.min(Math.min(wh, ww) - 40, cols * size);
+  btot = rows * cols;
+  bx = w / cols - 8; // Subtract margin space (4px * 2)
   by = bx;
 }
 
@@ -117,7 +117,7 @@ function initBoard() {
 
   // Fill box array with numbers and blanks, then shuffle
   // Optimized: use Array.from and ternary
-  box = Array.from({ length: btot + 1 }, (_, i) => i < nums ? i + 1 : '');
+  box = Array.from({ length: btot }, (_, i) => i < nums ? i + 1 : '');
   shuffle(box);
 
   // Create board HTML using array map (more efficient)
@@ -290,9 +290,17 @@ function applySettings() {
 
   saveConfig();
 
-  // Notify if graphs setting changed
+  // Handle graph toggling dynamically
   if (oldShowGraphs !== config.showGraphs) {
-    alert('Graph settings changed. Please reload the page (F5) for changes to take effect.');
+    if (config.showGraphs) {
+      // Enable graphs - load Plotly and initialize
+      loadPlotly(() => {
+        initGraphs();
+      });
+    } else {
+      // Disable graphs - just hide them
+      hideGraphDivs();
+    }
   }
 
   initBoard();
@@ -317,9 +325,15 @@ function resetSettings() {
   updateSettingsUI();
   initBoard();
 
-  // Notify if graphs setting changed
+  // Handle graph toggling dynamically
   if (oldShowGraphs !== config.showGraphs) {
-    alert('Graph settings changed. Please reload the page (F5) for changes to take effect.');
+    if (config.showGraphs) {
+      loadPlotly(() => {
+        initGraphs();
+      });
+    } else {
+      hideGraphDivs();
+    }
   }
 }
 
@@ -353,6 +367,46 @@ function handleResize() {
   }, 250);
 }
 
+// Dynamically load Plotly library
+function loadPlotly(callback) {
+  if (typeof Plotly !== 'undefined') {
+    callback();
+    return;
+  }
+
+  const script = document.createElement('script');
+  script.src = 'https://cdn.plot.ly/plotly-latest.min.js';
+  script.onload = callback;
+  script.onerror = () => {
+    console.error('Failed to load Plotly library');
+    config.showGraphs = false;
+    saveConfig();
+  };
+  document.head.appendChild(script);
+}
+
+// Show graph divs
+function showGraphDivs() {
+  const viewtime = document.getElementById('viewtime');
+  const moves = document.getElementById('moves');
+  const games = document.getElementById('games');
+
+  if (viewtime) viewtime.classList.add('visible');
+  if (moves) moves.classList.add('visible');
+  if (games) games.classList.add('visible');
+}
+
+// Hide graph divs
+function hideGraphDivs() {
+  const viewtime = document.getElementById('viewtime');
+  const moves = document.getElementById('moves');
+  const games = document.getElementById('games');
+
+  if (viewtime) viewtime.classList.remove('visible');
+  if (moves) moves.classList.remove('visible');
+  if (games) games.classList.remove('visible');
+}
+
 // Remove unused graph divs if graphs are not enabled
 function removeUnusedDivs() {
   if (!config.showGraphs || typeof Plotly === 'undefined') {
@@ -369,9 +423,7 @@ function removeUnusedDivs() {
 // Initialize graphs if Plotly is available
 function initGraphs() {
   if (typeof Plotly !== 'undefined' && config.showGraphs) {
-    document.getElementById('viewtime').classList.add('visible');
-    document.getElementById('moves').classList.add('visible');
-    document.getElementById('games').classList.add('visible');
+    showGraphDivs();
 
     Plotly.newPlot('viewtime', [{
       type: 'histogram',
@@ -459,20 +511,12 @@ function previewBoard() {
     document.getElementById('nums-value').textContent = maxNums;
   }
 
-  // Create temporary preview configuration
-  const tempConfig = {
-    rows: previewRows,
-    cols: previewCols,
-    nums: previewNums,
-    hideNumbersAtStart: config.hideNumbersAtStart
-  };
-
   // Calculate preview dimensions
   const ww = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
   const wh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-  const w = Math.min(Math.min(wh, ww) - 40, previewRows * size);
-  const btot = previewRows * previewCols - 1;
-  const bx = w / previewRows - 2;
+  const w = Math.min(Math.min(wh, ww) - 40, previewCols * size);
+  const btot = previewRows * previewCols;
+  const bx = w / previewCols - 8; // Subtract margin space
   const by = bx;
 
   // Apply preview CSS
@@ -483,11 +527,11 @@ function previewBoard() {
   }
 
   // Create preview board
-  const previewBox = Array.from({ length: btot + 1 }, (_, i) => i < previewNums ? i + 1 : '');
+  const previewBox = Array.from({ length: btot }, (_, i) => i < previewNums ? i + 1 : '');
   shuffle(previewBox);
 
   const boardHTML = previewBox.map((value, i) => {
-    const display = tempConfig.hideNumbersAtStart ? '' : value;
+    const display = config.hideNumbersAtStart ? '' : value;
     return `<li data-index="${i}">${display}</li>`;
   }).join('');
 
@@ -515,14 +559,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Update settings UI
   updateSettingsUI();
 
-  // Remove unused divs if graphs are not enabled
-  removeUnusedDivs();
-
   // Initialize board
   initBoard();
 
-  // Initialize graphs if enabled
-  initGraphs();
+  // Load graphs dynamically if enabled
+  if (config.showGraphs) {
+    loadPlotly(() => {
+      initGraphs();
+    });
+  } else {
+    removeUnusedDivs();
+  }
 
   // Handle window resize
   window.addEventListener('resize', handleResize);

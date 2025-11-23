@@ -48,7 +48,7 @@
     <div class="setting-group checkbox-group">
       <label>
         <input type="checkbox" id="setting-show-graphs">
-        Show performance graphs (requires page reload)
+        Show performance graphs
       </label>
     </div>
 
@@ -91,19 +91,6 @@
 <!-- Score Display -->
 <div id="score"></div>
 
-<script>
-  // Load Plotly if graphs are enabled
-  if (localStorage.getItem('chimp-game-config')) {
-    try {
-      const config = JSON.parse(localStorage.getItem('chimp-game-config'));
-      if (config.showGraphs) {
-        document.write('<script src="https://cdn.plot.ly/plotly-latest.min.js"><\/script>');
-      }
-    } catch (e) {
-      console.log('Could not check graph settings:', e);
-    }
-  }
-</script>
 <script src="game.js"></script>
 </body>
 </html>
