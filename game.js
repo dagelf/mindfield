@@ -249,11 +249,26 @@ function handleClick(m) {
 // Update score display
 function updateScore(gameTime, mistakes, streak, streaktime, topstreak, topstreaktime) {
   const score = document.getElementById('score');
-  let html = `<div class="score-entry">Done in ${gameTime}ms with ${mistakes} mistakes!</div>`;
-  html += `<div class="score-entry">Current streak: ${streak} games in ${streaktime}ms. Best: ${topstreak} games in ${topstreaktime}ms!</div>`;
+
+  // Format mistake text
+  const mistakeText = mistakes === 1 ? '1 mistake' : `${mistakes} mistakes`;
+
+  // Format streak text with proper grammar
+  const streakGameText = streak === 1 ? 'game' : 'games';
+  const topStreakGameText = topstreak === 1 ? 'game' : 'games';
+
+  // Build score HTML
+  let html = `<div class="score-entry">⏱️ ${gameTime}ms with ${mistakeText}</div>`;
+
+  if (streak > 0) {
+    html += `<div class="score-entry">🔥 Streak: ${streak} ${streakGameText} (${streaktime}ms) | Best: ${topstreak} ${topStreakGameText} (${topstreaktime}ms)</div>`;
+  } else if (topstreak > 0) {
+    html += `<div class="score-entry">Best streak: ${topstreak} ${topStreakGameText} in ${topstreaktime}ms</div>`;
+  }
+
   score.innerHTML = html + score.innerHTML;
 
-  // Keep only last 10 game results (20 entries, 2 per game)
+  // Keep only last 10 game results
   const entries = score.querySelectorAll('.score-entry');
   if (entries.length > 20) {
     for (let i = 20; i < entries.length; i++) {
