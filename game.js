@@ -480,22 +480,37 @@ function updateGraphs() {
       type: 'histogram',
       x: tview,
       xbins: { size: 50, end: 2000 },
+      name: 'View Time',
       marker: { color: '#667eea' }
-    }]);
+    }], {
+      title: 'Time to First Click (ms)',
+      xaxis: { title: 'Time (ms)' },
+      yaxis: { title: 'Frequency' }
+    });
 
     Plotly.react('moves', [{
       type: 'histogram',
       x: tmove,
       xbins: { size: 50, end: 2000 },
+      name: 'Move Time',
       marker: { color: '#764ba2' }
-    }]);
+    }], {
+      title: 'Time Between Clicks (ms)',
+      xaxis: { title: 'Time (ms)' },
+      yaxis: { title: 'Frequency' }
+    });
 
     Plotly.react('games', [{
       type: 'histogram',
       x: tgame,
       xbins: { size: 50, end: 4000 },
+      name: 'Game Time',
       marker: { color: '#667eea' }
-    }]);
+    }], {
+      title: 'Total Game Time (ms)',
+      xaxis: { title: 'Time (ms)' },
+      yaxis: { title: 'Frequency' }
+    });
   }
 }
 
