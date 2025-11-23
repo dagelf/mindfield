@@ -582,7 +582,7 @@ function initGraphs() {
     Plotly.newPlot('viewtime', [{
       type: 'histogram',
       x: tview,
-      xbins: { size: 50, end: 2000 },
+      autobinx: true,
       name: 'View Time',
       marker: { color: '#667eea' }
     }], {
@@ -594,7 +594,7 @@ function initGraphs() {
     Plotly.newPlot('moves', [{
       type: 'histogram',
       x: tmove,
-      xbins: { size: 50, end: 2000 },
+      autobinx: true,
       name: 'Move Time',
       marker: { color: '#764ba2' }
     }], {
@@ -625,7 +625,7 @@ function updateGraphs() {
     Plotly.react('viewtime', [{
       type: 'histogram',
       x: tview,
-      xbins: { size: 50, end: 2000 },
+      autobinx: true,
       name: 'View Time',
       marker: { color: '#667eea' }
     }], {
@@ -637,7 +637,7 @@ function updateGraphs() {
     Plotly.react('moves', [{
       type: 'histogram',
       x: tmove,
-      xbins: { size: 50, end: 2000 },
+      autobinx: true,
       name: 'Move Time',
       marker: { color: '#764ba2' }
     }], {
