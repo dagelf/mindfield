@@ -604,15 +604,17 @@ function initGraphs() {
     });
 
     Plotly.newPlot('games', [{
-      type: 'histogram',
-      x: tgame,
-      xbins: { size: 50, end: 4000 },
+      type: 'scatter',
+      mode: 'lines+markers',
+      x: Array.from({ length: tgame.length }, (_, i) => i + 1),
+      y: tgame,
       name: 'Game Time',
-      marker: { color: '#667eea' }
+      line: { color: '#667eea', width: 2 },
+      marker: { color: '#764ba2', size: 8 }
     }], {
-      title: 'Total Game Time (ms)',
-      xaxis: { title: 'Time (ms)' },
-      yaxis: { title: 'Frequency' }
+      title: 'Game Performance Over Time',
+      xaxis: { title: 'Game Number' },
+      yaxis: { title: 'Time (ms)' }
     });
   }
 }
@@ -645,15 +647,17 @@ function updateGraphs() {
     });
 
     Plotly.react('games', [{
-      type: 'histogram',
-      x: tgame,
-      xbins: { size: 50, end: 4000 },
+      type: 'scatter',
+      mode: 'lines+markers',
+      x: Array.from({ length: tgame.length }, (_, i) => i + 1),
+      y: tgame,
       name: 'Game Time',
-      marker: { color: '#667eea' }
+      line: { color: '#667eea', width: 2 },
+      marker: { color: '#764ba2', size: 8 }
     }], {
-      title: 'Total Game Time (ms)',
-      xaxis: { title: 'Time (ms)' },
-      yaxis: { title: 'Frequency' }
+      title: 'Game Performance Over Time',
+      xaxis: { title: 'Game Number' },
+      yaxis: { title: 'Time (ms)' }
     });
   }
 }
